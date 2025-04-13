@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using _584_bb_proj.Dto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -39,6 +40,52 @@ namespace _584_bb_proj.Controllers
             }
 
             return division;
+        }
+
+        [HttpGet("{id}/teams")]
+        public async Task<ActionResult<DivisionTeams>> GetDivisionTeams(int id)
+        {
+            DivisionTeams division = await _context.Divisions
+                .Where(d => d.Id == id)
+                .Select(d => new DivisionTeams
+                {
+                    Id = d.Id,
+                    Name = d.Name,
+                    Teams = d.Teams.Select(t => new TeamDivision
+                    {
+                        Id = t.Id,
+                        Name = t.Name,
+                        Location = t.Location,
+                        DivisionName = d.Name,
+                    }).ToList()
+                }).SingleAsync();
+
+            if (division == null)
+            {
+                return NotFound();
+            }
+            return division;
+        }
+
+        [HttpGet("WithTeams")]
+        public async Task<ActionResult<DivisionTeams>> GetDivisionTeams()
+        {
+            var divisions = await _context.Divisions
+                .Select(d => new DivisionTeams
+                {
+                    Id = d.Id,
+                    Name = d.Name,
+                    Teams = d.Teams.Select(t => new TeamDivision
+                    {
+                        Id = t.Id,
+                        Name = t.Name,
+                        Location = t.Location,
+                        DivisionName = d.Name
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            return Ok(divisions);
         }
 
         // PUT: api/Divisions/5

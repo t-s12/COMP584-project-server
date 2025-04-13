@@ -15,20 +15,22 @@ public class BaseballContext : DbContext
     public DbSet<Division> Divisions { get; set; }
     public DbSet<Team> Teams { get; set; }
     public DbSet<Player> Players { get; set; }
+    public DbSet<Pitcher> Pitchers { get; set; }
+    public DbSet<Position_Player> Position_Players { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Division to Teams relationship
-        //modelBuilder.Entity<Team>()
-        //    .HasOne(t => t.Division)
-        //    .WithMany(d => d.Teams)
-        //    .HasForeignKey(t => t.DivisionId);
+        modelBuilder.Entity<Team>()
+            .HasOne(t => t.Division)
+            .WithMany(d => d.Teams)
+            .HasForeignKey(t => t.DivisionId);
 
-        //// Team to Players relationship
-        //modelBuilder.Entity<Player>()
-        //    .HasOne(p => p.Team)
-        //    .WithMany(t => t.Players)
-        //    .HasForeignKey(p => p.TeamId);
+        // Team to Players relationship
+        modelBuilder.Entity<Player>()
+            .HasOne(p => p.Team)
+            .WithMany(t => t.Players)
+            .HasForeignKey(p => p.TeamId);
     }
 }
 

@@ -18,6 +18,9 @@ public partial class Team
     [Column("name")]
     public string Name { get; set; }
 
+    [Column("location")]
+    public string Location { get; set; }
+
     [Column("divisionid")]
     public int DivisionId { get; set; }
 
@@ -27,5 +30,11 @@ public partial class Team
 
     [InverseProperty("Team")]
     public virtual ICollection<Player> Players { get; set; } = new List<Player>();
+
+    [InverseProperty("Team")]
+    public virtual ICollection<Position_Player> Position_Players { get; set; } = new List<Position_Player>();
+
+    [InverseProperty("Team")]
+    public virtual ICollection<Pitcher> Pitchers { get; set; } = new List<Pitcher>();
 
 }
