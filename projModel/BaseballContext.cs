@@ -5,32 +5,53 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace projModel;
 
-public class BaseballContext : DbContext
+public partial class BaseballContext : IdentityDbContext
 {
     public BaseballContext(DbContextOptions<BaseballContext> options) : base(options) { }
 
     public DbSet<Division> Divisions { get; set; }
     public DbSet<Team> Teams { get; set; }
-    public DbSet<Player> Players { get; set; }
     public DbSet<Pitcher> Pitchers { get; set; }
     public DbSet<Position_Player> Position_Players { get; set; }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (optionsBuilder.IsConfigured)
+        {
+            return;
+        }
+        IConfigurationBuilder builder = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json");
+        IConfigurationRoot configuration = builder.Build();
+        optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Division to Teams relationship
-        modelBuilder.Entity<Team>()
-            .HasOne(t => t.Division)
-            .WithMany(d => d.Teams)
-            .HasForeignKey(t => t.DivisionId);
+        base.OnModelCreating(modelBuilder);
 
-        // Team to Players relationship
-        modelBuilder.Entity<Player>()
-            .HasOne(p => p.Team)
-            .WithMany(t => t.Players)
-            .HasForeignKey(p => p.TeamId);
+        //modelBuilder.Entity<City>(entity =>
+        //{
+
+        //    entity.HasOne(d => d.Country).WithMany(p => p.Cities)
+        //        .OnDelete(DeleteBehavior.ClientSetNull)
+        //        .HasConstraintName("FK_City_Country");
+        //});
+
+        //modelBuilder.Entity<Country>(entity =>
+        //{
+        //    entity.Property(e => e.Iso2).IsFixedLength();
+        //    entity.Property(e => e.Iso3).IsFixedLength();
+        //});
+
+        OnModelCreatingPartial(modelBuilder);
     }
+
+    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
 

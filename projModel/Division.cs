@@ -15,7 +15,7 @@ public class Division
     public int Id { get; set; }
 
     [Column("name")]
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     [InverseProperty("Division")]
     public virtual ICollection<Team> Teams { get; set; } = new List<Team>();

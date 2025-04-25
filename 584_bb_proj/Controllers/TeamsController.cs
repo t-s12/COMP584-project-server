@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using _584_bb_proj.Dto;
+//using _584_bb_proj.Dto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -40,20 +40,6 @@ namespace _584_bb_proj.Controllers
             }
 
             return team;
-        }
-
-        [HttpGet("{id}/TeamDivision")]
-        public async Task<ActionResult<IEnumerable<TeamDivision>>> GetTeamWithDivision(int id)
-        {
-            return await _context.Teams.Where(team => team.Id == id).Select(team =>
-                new TeamDivision
-                {
-                    Id = team.Id,
-                    Name = team.Name,
-                    Location = team.Location,
-                    DivisionName = team.Division.Name
-                }
-            ).ToListAsync();
         }
 
         [HttpGet("{id}/WithPlayers")]
