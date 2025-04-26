@@ -5,30 +5,32 @@ namespace _584_bb_proj.Data
 {
     public class PitcherDto
     {
-        public string Name { get; set; } = null!;
-        public string TeamName { get; set; } = null!;
-        public int Wins { get; set; }
-        public int Losses { get; set; }
-        public decimal ERA { get; set; }
-        public int Games_Played { get; set; }
-        public int Games_Started { get; set; }
-        public int Quality_Starts { get; set; }
-        public int Complete_Games { get; set; }
-        public int Shutouts { get; set; }
-        public int Saves { get; set; }
-        public int Holds { get; set; }
-        public int Blown_Saves { get; set; }
-        public decimal Innings_Pitched { get; set; }
-        public int Total_Batters_Faced { get; set; }
-        public int Hits { get; set; }
-        public int Runs { get; set; }
-        public int Earned_Runs { get; set; }
-        public int Home_Runs { get; set; }
-        public int Walks { get; set; }
-        public int Intentional_Walks { get; set; }
-        public int HBP { get; set; }
-        public int Wild_Pitches { get; set; }
-        public int Balks { get; set; }
-        public int Strikeouts { get; set; }
+        public string name { get; set; } = null!;
+        public string location { get; set; } = null!;
+        public string team { get; set; } = null!;
+        public string division { get; set; } = null!;
+        public int wins { get; set; }
+        public int losses { get; set; }
+        public decimal era { get; set; }
+        public int games_played { get; set; }
+        public int games_started { get; set; }
+        public int quality_starts { get; set; }
+        public int complete_games { get; set; }
+        public int shutouts { get; set; }
+        public int saves { get; set; }
+        public int holds { get; set; }
+        public int blown_saves { get; set; }
+        public decimal innings_pitched { get; set; }
+        public int total_batters_faced { get; set; }
+        public int hits { get; set; }
+        public int runs { get; set; }
+        public int earned_runs { get; set; }
+        public int home_runs { get; set; }
+        public int walks { get; set; }
+        public int intentional_walks { get; set; }
+        public int hbp { get; set; }
+        public int wild_pitches { get; set; }
+        public int balks { get; set; }
+        public int strikeouts { get; set; }
     }
 }

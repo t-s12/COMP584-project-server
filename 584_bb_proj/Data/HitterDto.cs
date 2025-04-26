@@ -1,30 +1,33 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using projModel;
 
 namespace _584_bb_proj.Data
 {
     public class HitterDto
     {
-        public string Name { get; set; } = null!;
-        public string TeamName { get; set; } = null!;
-        public int Games_Played { get; set; }
-        public int At_Bats { get; set; }
-        public int Plate_Appearances { get; set; }
-        public int Hits { get; set; }
-        public int Singles { get; set; }
-        public int Doubles { get; set; }
-        public int Triples { get; set; }
-        public int Home_Runs { get; set; }
-        public int Runs_Scored { get; set; }
-        public int RBI { get; set; }
-        public int Walks { get; set; }
-        public int Intentional_Walks { get; set; }
-        public int Strikeouts { get; set; }
-        public int HBP { get; set; }
-        public int Sac_Fly { get; set; }
-        public int Sac_Hit { get; set; }
-        public int GDP { get; set; }
-        public int Stolen_Bases { get; set; }
-        public int Caught_Stealing { get; set; }
-        public decimal Batting_Average { get; set; }
+        public string name { get; set; } = null!;
+        public string location { get; set; } = null!;
+        public string team { get; set; } = null!;
+        public string division { get; set; } = null!;
+        public int games_played { get; set; }
+        public int at_bats { get; set; }
+        public int plate_appearances { get; set; }
+        public int hits { get; set; }
+        public int singles { get; set; }
+        public int doubles { get; set; }
+        public int triples { get; set; }
+        public int home_runs { get; set; }
+        public int runs_scored { get; set; }
+        public int rbi { get; set; }
+        public int walks { get; set; }
+        public int intentional_walks { get; set; }
+        public int strikeouts { get; set; }
+        public int hbp { get; set; }
+        public int sac_fly { get; set; }
+        public int sac_hit { get; set; }
+        public int gdp { get; set; }
+        public int stolen_bases { get; set; }
+        public int caught_stealing { get; set; }
+        public decimal batting_average { get; set; }
     }
 }

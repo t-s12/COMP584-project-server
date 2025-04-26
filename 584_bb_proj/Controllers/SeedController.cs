@@ -21,118 +21,153 @@ namespace _584_bb_proj.Controllers
         [HttpPost("Pitchers")]
         public async Task<ActionResult> ImportPitchersAsync()
         {
-            Dictionary<string, Team> teams = await context.Teams//.AsNoTracking()
-            .ToDictionaryAsync(t => t.Name);
+            var divisions = await context.Divisions
+                .ToDictionaryAsync(d => d.Name, StringComparer.OrdinalIgnoreCase);
+            var teams = await context.Teams
+                .ToDictionaryAsync(t => t.Name, StringComparer.OrdinalIgnoreCase);
 
-            CsvConfiguration config = new(CultureInfo.InvariantCulture)
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
                 HasHeaderRecord = true,
                 HeaderValidated = null
             };
-            int cityCount = 0;
-            using (StreamReader reader = new(_pitcherPathName))
-            using (CsvReader csv = new(reader, config))
-            {
-                IEnumerable<PitcherDto>? records = csv.GetRecords<PitcherDto>();
-                foreach (PitcherDto record in records)
-                {
-                    if (!teams.TryGetValue(record.TeamName, out Team? value))
-                    {
-                        Console.WriteLine($"No team found for {record.Name}");
-                        return NotFound(record);
-                    }
 
-                    Pitcher pitcher = new()
-                    {
-                        Name = record.Name,
-                        Wins = record.Wins,
-                        Losses = record.Losses,
-                        ERA = record.ERA,
-                        Games_Played = record.Games_Played,
-                        Games_Started = record.Games_Started,
-                        Quality_Starts = record.Quality_Starts,
-                        Complete_Games = record.Complete_Games,
-                        Shutouts = record.Shutouts,
-                        Saves = record.Saves,
-                        Holds = record.Holds,
-                        Blown_Saves = record.Blown_Saves,
-                        Innings_Pitched = record.Innings_Pitched,
-                        Total_Batters_Faced = record.Total_Batters_Faced,
-                        Hits = record.Hits,
-                        Runs = record.Runs,
-                        Earned_Runs = record.Earned_Runs,
-                        Home_Runs = record.Home_Runs,
-                        Walks = record.Walks,
-                        Intentional_Walks = record.Intentional_Walks,
-                        HBP = record.HBP,
-                        Wild_Pitches = record.Wild_Pitches,
-                        Balks = record.Balks,
-                        Strikeouts = record.Strikeouts,
-                        TeamId = value.Id,
-                    };
-                    context.Pitchers.Add(pitcher);
-                    cityCount++;
+            int imported = 0;
+            using var reader = new StreamReader(_pitcherPathName);
+            using var csv = new CsvReader(reader, config);
+            var records = csv.GetRecords<PitcherDto>();
+
+            foreach (var record in records)
+            {
+                
+                if (!divisions.TryGetValue(record.division, out var division))
+                {
+                    division = new Division { Name = record.division };
+                    context.Divisions.Add(division);
+                    divisions.Add(division.Name, division);
                 }
-                await context.SaveChangesAsync();
+
+                if (!teams.TryGetValue(record.team, out var team))
+                {
+                    team = new Team
+                    {
+                        Name = record.team,
+                        Location = record.location,
+                        Division = division
+                    };
+                    context.Teams.Add(team);
+                    teams.Add(team.Name, team);
+                }
+
+                var pitcher = new Pitcher
+                {
+                    Name = record.name,
+                    Wins = record.wins,
+                    Losses = record.losses,
+                    ERA = record.era,
+                    Games_Played = record.games_played,
+                    Games_Started = record.games_started,
+                    Quality_Starts = record.quality_starts,
+                    Complete_Games = record.complete_games,
+                    Shutouts = record.shutouts,
+                    Saves = record.saves,
+                    Holds = record.holds,
+                    Blown_Saves = record.blown_saves,
+                    Innings_Pitched = record.innings_pitched,
+                    Total_Batters_Faced = record.total_batters_faced,
+                    Hits = record.hits,
+                    Runs = record.runs,
+                    Earned_Runs = record.earned_runs,
+                    Home_Runs = record.home_runs,
+                    Walks = record.walks,
+                    Intentional_Walks = record.intentional_walks,
+                    HBP = record.hbp,
+                    Wild_Pitches = record.wild_pitches,
+                    Balks = record.balks,
+                    Strikeouts = record.strikeouts,
+                    Team = team   
+                };
+                context.Pitchers.Add(pitcher);
+                imported++;
             }
-            return new JsonResult(cityCount);
+
+            await context.SaveChangesAsync();
+            return Ok(imported);
         }
 
         [HttpPost("Hitters")]
         public async Task<ActionResult> ImportHittersAsync()
         {
-            Dictionary<string, Team> teams = await context.Teams//.AsNoTracking()
-            .ToDictionaryAsync(t => t.Name);
+            // 1) Load existing divisions and teams into dictionaries
+            var divisions = await context.Divisions
+                .ToDictionaryAsync(d => d.Name, StringComparer.OrdinalIgnoreCase);
+            var teams = await context.Teams
+                .ToDictionaryAsync(t => t.Name, StringComparer.OrdinalIgnoreCase);
 
-            CsvConfiguration config = new(CultureInfo.InvariantCulture)
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
                 HasHeaderRecord = true,
                 HeaderValidated = null
             };
-            int cityCount = 0;
-            using (StreamReader reader = new(_hitterPathName))
-            using (CsvReader csv = new(reader, config))
-            {
-                IEnumerable<HitterDto>? records = csv.GetRecords<HitterDto>();
-                foreach (HitterDto record in records)
-                {
-                    if (!teams.TryGetValue(record.TeamName, out Team? value))
-                    {
-                        Console.WriteLine($"No team found for {record.Name}");
-                        return NotFound(record);
-                    }
 
-                    Position_Player hitter = new()
-                    {
-                        Name = record.Name,
-                        Games_Played = record.Games_Played,
-                        At_Bats = record.At_Bats,
-                        Plate_Appearances = record.Plate_Appearances,
-                        Hits = record.Hits,
-                        Singles = record.Singles,
-                        Doubles = record.Doubles,
-                        Triples = record.Triples,
-                        Home_Runs = record.Home_Runs,
-                        Runs_Scored = record.Runs_Scored,
-                        RBI = record.RBI,
-                        Walks = record.Walks,
-                        Intentional_Walks = record.Intentional_Walks,
-                        Strikeouts = record.Strikeouts,
-                        HBP = record.HBP,
-                        Sac_Fly = record.Sac_Fly,
-                        Sac_Hit = record.Sac_Hit,
-                        GDP = record.GDP,
-                        Stolen_Bases = record.Stolen_Bases,
-                        Caught_Stealing = record.Caught_Stealing,
-                        Batting_Average = record.Batting_Average,
-                        TeamId = value.Id,
-                    };
-                    context.Position_Players.Add(hitter);
-                    cityCount++;
+            int imported = 0;
+            using var reader = new StreamReader(_hitterPathName);
+            using var csv = new CsvReader(reader, config);
+            var records = csv.GetRecords<HitterDto>();
+
+            foreach (var record in records)
+            {
+                if (!divisions.TryGetValue(record.division, out var division))
+                {
+                    division = new Division { Name = record.division };
+                    context.Divisions.Add(division);
+                    divisions.Add(division.Name, division);
                 }
-                await context.SaveChangesAsync();
+
+                if (!teams.TryGetValue(record.team, out var team))
+                {
+                    team = new Team
+                    {
+                        Name = record.team,
+                        Location = record.location,
+                        Division = division
+                    };
+                    context.Teams.Add(team);
+                    teams.Add(team.Name, team);
+                }
+
+                var hitter = new Position_Player
+                {
+                    Name = record.name,
+                    Games_Played = record.games_played,
+                    At_Bats = record.at_bats,
+                    Plate_Appearances = record.plate_appearances,
+                    Hits = record.hits,
+                    Singles = record.singles,
+                    Doubles = record.doubles,
+                    Triples = record.triples,
+                    Home_Runs = record.home_runs,
+                    Runs_Scored = record.runs_scored,
+                    RBI = record.rbi,
+                    Walks = record.walks,
+                    Intentional_Walks = record.intentional_walks,
+                    Strikeouts = record.strikeouts,
+                    HBP = record.hbp,
+                    Sac_Fly = record.sac_fly,
+                    Sac_Hit = record.sac_hit,
+                    GDP = record.gdp,
+                    Stolen_Bases = record.stolen_bases,
+                    Caught_Stealing = record.caught_stealing,
+                    Batting_Average = record.batting_average,
+                    Team = team
+                };
+                context.Position_Players.Add(hitter);
+                imported++;
             }
-            return new JsonResult(cityCount);
+
+            await context.SaveChangesAsync();
+            return Ok(imported);
         }
+
     }
 }
