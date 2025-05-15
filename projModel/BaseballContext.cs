@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace projModel;
 
-public partial class BaseballContext : IdentityDbContext
+public partial class BaseballContext : IdentityDbContext<BaseballTeamsUser>
 {
     public BaseballContext(DbContextOptions<BaseballContext> options)
         : base(options)

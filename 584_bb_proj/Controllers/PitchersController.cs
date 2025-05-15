@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +29,7 @@ namespace _584_bb_proj.Controllers
         }
 
         // GET: api/Pitchers/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Pitcher>> GetPitcher(int id)
         {

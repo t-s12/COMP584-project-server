@@ -8,15 +8,35 @@ using _584_bb_proj.Data;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace _584_bb_proj.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SeedController(BaseballContext context, IHostEnvironment environment) : ControllerBase
+    public class SeedController(BaseballContext context, 
+        IHostEnvironment environment,
+        UserManager<BaseballTeamsUser> userManager) : ControllerBase
     {
         string _pitcherPathName = Path.Combine(environment.ContentRootPath, "Data/pitcher_stats.csv");
         string _hitterPathName = Path.Combine(environment.ContentRootPath, "Data/hitter_stats.csv");
+
+        [HttpPost("Users")]
+        public async Task ImportUsersAsync()
+        {
+
+            BaseballTeamsUser user = new()
+            {
+                UserName = "user",
+                Email = "user@gmail.com",
+                SecurityStamp = Guid.NewGuid().ToString(),
+            };
+
+            IdentityResult x = await userManager.CreateAsync(user, "Passw0rd!");
+
+            int y = await context.SaveChangesAsync();
+
+        }
 
         [HttpPost("Pitchers")]
         public async Task<ActionResult> ImportPitchersAsync()
