@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using _584_bb_proj.Dto;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -46,14 +48,41 @@ namespace _584_bb_proj.Controllers
         // PUT: api/Pitchers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPitcher(int id, Pitcher pitcher)
+        [Authorize]
+        public async Task<IActionResult> PutPitcher(int id, [FromBody] PitcherUpdateDto dto)
         {
-            if (id != pitcher.Id)
-            {
-                return BadRequest();
-            }
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            _context.Entry(pitcher).State = EntityState.Modified;
+            var entity = await _context.Pitchers.FindAsync(id);
+            if (entity == null)
+                return NotFound();
+
+            // Manually map—or use AutoMapper—to apply the changes:
+            entity.Name = dto.Name;
+            entity.Wins = dto.Wins;
+            entity.Losses = dto.Losses;
+            entity.ERA = dto.ERA;
+            entity.Games_Played = dto.Games_Played;
+            entity.Games_Started = dto.Games_Started;
+            entity.Quality_Starts = dto.Quality_Starts;
+            entity.Complete_Games = dto.Complete_Games;
+            entity.Shutouts = dto.Shutouts;
+            entity.Saves = dto.Saves;
+            entity.Holds = dto.Holds;
+            entity.Blown_Saves = dto.Blown_Saves;
+            entity.Innings_Pitched = dto.Innings_Pitched;
+            entity.Total_Batters_Faced = dto.Total_Batters_Faced;
+            entity.Hits = dto.Hits;
+            entity.Runs = dto.Runs;
+            entity.Earned_Runs = dto.Earned_Runs;
+            entity.Home_Runs = dto.Home_Runs;
+            entity.Walks = dto.Walks;
+            entity.Intentional_Walks = dto.Intentional_Walks;
+            entity.HBP = dto.HBP;
+            entity.Wild_Pitches = dto.Wild_Pitches;
+            entity.Balks = dto.Balks;
+            entity.Strikeouts = dto.Strikeouts;
 
             try
             {
@@ -62,16 +91,12 @@ namespace _584_bb_proj.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!PitcherExists(id))
-                {
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
 
-            return NoContent();
+            return NoContent();  // 204 → updated
         }
 
         // POST: api/Pitchers
@@ -104,6 +129,6 @@ namespace _584_bb_proj.Controllers
         private bool PitcherExists(int id)
         {
             return _context.Pitchers.Any(e => e.Id == id);
-        }
+        }        
     }
 }

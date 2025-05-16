@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using _584_bb_proj.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -46,14 +47,38 @@ namespace _584_bb_proj.Controllers
         // PUT: api/Position_Players/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPosition_Player(int id, Position_Player position_Player)
+        [Authorize]                // require login if you want to lock this down
+        public async Task<IActionResult> PutPosition_Player(int id, [FromBody] HitterUpdateDto dto)
         {
-            if (id != position_Player.Id)
-            {
-                return BadRequest();
-            }
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            _context.Entry(position_Player).State = EntityState.Modified;
+            var hitter = await _context.Position_Players.FindAsync(id);
+            if (hitter == null)
+                return NotFound();
+
+            // map every DTO field onto the entity:
+            hitter.Name = dto.Name;
+            hitter.Games_Played = dto.Games_Played;
+            hitter.At_Bats = dto.At_Bats;
+            hitter.Plate_Appearances = dto.Plate_Appearances;
+            hitter.Hits = dto.Hits;
+            hitter.Singles = dto.Singles;
+            hitter.Doubles = dto.Doubles;
+            hitter.Triples = dto.Triples;
+            hitter.Home_Runs = dto.Home_Runs;
+            hitter.Runs_Scored = dto.Runs_Scored;
+            hitter.RBI = dto.RBI;
+            hitter.Walks = dto.Walks;
+            hitter.Intentional_Walks = dto.Intentional_Walks;
+            hitter.Strikeouts = dto.Strikeouts;
+            hitter.HBP = dto.HBP;
+            hitter.Sac_Fly = dto.Sac_Fly;
+            hitter.Sac_Hit = dto.Sac_Hit;
+            hitter.GDP = dto.GDP;
+            hitter.Stolen_Bases = dto.Stolen_Bases;
+            hitter.Caught_Stealing = dto.Caught_Stealing;
+            hitter.Batting_Average = dto.Batting_Average;
 
             try
             {
@@ -61,17 +86,13 @@ namespace _584_bb_proj.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!Position_PlayerExists(id))
-                {
+                // if someone else deleted it in the meantime
+                if (!_context.Position_Players.Any(e => e.Id == id))
                     return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
-            return NoContent();
+            return NoContent();  // 204: updated successfully
         }
 
         // POST: api/Position_Players

@@ -12,8 +12,8 @@ using projModel;
 namespace projModel.Migrations
 {
     [DbContext(typeof(BaseballContext))]
-    [Migration("20250515202632_identity")]
-    partial class identity
+    [Migration("20250516000350_batting_avg_fix")]
+    partial class batting_avg_fix
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -373,7 +373,7 @@ namespace projModel.Migrations
                         .HasColumnName("at_bats");
 
                     b.Property<decimal>("Batting_Average")
-                        .HasColumnType("decimal(18,2)")
+                        .HasColumnType("decimal(18,3)")
                         .HasColumnName("batting_average");
 
                     b.Property<int>("Caught_Stealing")

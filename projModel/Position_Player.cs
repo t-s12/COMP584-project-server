@@ -79,7 +79,7 @@ namespace projModel
         [Column("caught_stealing")]
         public int Caught_Stealing { get; set; }
 
-        [Column("batting_average")]
+        [Column("batting_average", TypeName = "decimal(18,3)"),]
         public decimal Batting_Average { get; set; }
 
         [JsonIgnore]

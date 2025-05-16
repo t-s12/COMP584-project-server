@@ -370,7 +370,7 @@ namespace projModel.Migrations
                         .HasColumnName("at_bats");
 
                     b.Property<decimal>("Batting_Average")
-                        .HasColumnType("decimal(18,2)")
+                        .HasColumnType("decimal(18,3)")
                         .HasColumnName("batting_average");
 
                     b.Property<int>("Caught_Stealing")
